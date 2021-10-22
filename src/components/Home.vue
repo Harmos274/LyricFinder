@@ -20,7 +20,7 @@ import { GeniusSearchLyricsResults } from "../services/geniusSearchLyricsResult.
 import { SearchResult } from "../services/searchResult.model";
 import ResultCardWireframe from "./ResultCardWireframe.vue";
 
-let searchResults: Ref<Array<SearchResult>> = ref([])
+const searchResults: Ref<Array<SearchResult>> = ref([])
 const showWireframe = ref(false)
 
 async function getLyrics(query: string) {
