@@ -8,23 +8,32 @@
       :song-lyrics="result.highlights"
       :song-artist="result.artist"
     />
+    <result-card-wireframe v-if="showWireframe" v-for="key in [0, 1, 2, 3, 4]" :key="key" />
   </div>
 </template>
 
 <script setup lang="ts">
 import ResultCard from "./ResultCard.vue"
 import SearchBar from "./SearchBar.vue";
-import Results from "./Results.vue";
 import { Ref, ref } from "vue";
-import { GeniusSearchLyricsResults } from "../services/lyricFinder.service";
-import { SearchResult } from "../services/searchResultModel";
-
+import { GeniusSearchLyricsResults } from "../services/geniusSearchLyricsResult.model";
+import { SearchResult } from "../services/searchResult.model";
+import ResultCardWireframe from "./ResultCardWireframe.vue";
 
 let searchResults: Ref<Array<SearchResult>> = ref([])
+const showWireframe = ref(false)
 
 async function getLyrics(query: string) {
   try {
-    const apiResponse: GeniusSearchLyricsResults = await fetch(`https://genius.com/api/search/lyrics?q=${query}`, {
+    showWireframe.value = true
+    searchResults.value = []
+    const trimed_query = query.trim()
+
+    if (trimed_query.length === 0) {
+      return
+    }
+
+    const apiResponse: GeniusSearchLyricsResults = await fetch(`https://genius.com/api/search/lyrics?q=${trimed_query}`, {
       method: "GET"
     }).then(r => r.text().then(JSON.parse))
 
@@ -37,6 +46,7 @@ async function getLyrics(query: string) {
         song_pic: hits.result.song_art_image_url
       }
     })
+    showWireframe.value = false
     searchResults.value = result
   }
   catch (e) {
@@ -44,10 +54,6 @@ async function getLyrics(query: string) {
     console.error(e)
   }
 }
-</script>
-
-<script lang="ts">
-
 </script>
 
 <style scoped>
